@@ -105,7 +105,7 @@ const page = () => {
                     </div>
                     <p className="text-center text-sm">Already a User? <Link href="/login" className="font-semibold hover:underline underline-offset-2">Login</Link></p>
                 </div>
-                <div className="hidden  sm:flex sm:w-1/2 rounded-lg px-2 py-4">
+                <div className="hidden  sm:flex sm:w-1/2 rounded-lg px-2 py-4 self-center">
                     <Image src="/login_side.jpg" alt="" width={400} height={640} className="w-full h-auto aspect-square" />
                 </div>
             </div>

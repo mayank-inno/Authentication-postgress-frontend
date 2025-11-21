@@ -123,7 +123,7 @@ const page = () => {
             <div className="absolute inset-0 bg-[url('/login-bg.jpg')] bg-cover bg-center blur-sm z-[2]"></div>
             <div className="max-w-[1200px] container px-1 py-4 sm:p-4 rounded-lg flex  gap-6 bg-white z-[3]">
                 <div className="hidden  sm:flex sm:w-1/2 rounded-lg px-2 py-4">
-                    <Image src="/login_side.png" alt="" width={1200} height={1200} className="w-full h-auto aspect-square"/>
+                    <Image src="/login_side.png" alt="" width={1200} height={1200} className="w-full h-auto aspect-square self-center"/>
                 </div>
                 <div className="w-full sm:w-1/2 rounded-lg flex flex-col gap-4">
                     <img src="/logo.avif" alt="Logo" className="w-[100px] mx-auto" />
