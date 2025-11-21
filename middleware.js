@@ -18,12 +18,16 @@ const middleware = (req) => {
 
 export default middleware
 
-export const config ={
-    matcher:[
-        "/",
-        "/login",
-        "/reset-password",
-        "/signup",
-        "/about-us"
-    ]
-}
+// export const config ={
+//     matcher:[
+//         "/",
+//         "/login",
+//         "/reset-password",
+//         "/signup",
+//         "/about-us"
+//     ]
+// }
+
+export const config = {
+  matcher: ["/((?!_next|api|favicon.ico|.*\\..*).*)"]
+};
