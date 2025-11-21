@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 
 const page = () => {
     const passConditions = ["Atleast 8 Characters", "1 Uppercase Letter", "1 Lowercase Letter", "1 Number", "1 Special Character"];
-    const backendUrl = "http://localhost:8080/api/v1";
+    const backendUrl = "https://authentication-postgress-backend-95.vercel.app/api/v1";
     const emailRef = useRef(null);
     const [loading, setLoading] = useState(false);
     const [authStep, setauthStep] = useState("otp");

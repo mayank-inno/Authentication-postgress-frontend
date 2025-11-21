@@ -41,7 +41,7 @@ const page = () => {
         }
         else {
             setLoading(true);
-            axios.post("http://localhost:8080/api/v1/sign-up", { email: data.email, password: data.password })
+            axios.post("https://authentication-postgress-backend-95.vercel.app/api/v1/sign-up", { email: data.email, password: data.password })
                 .then((res) => {
                     toast.success("Account Created SuccessFull");
                     router.push("/login");
