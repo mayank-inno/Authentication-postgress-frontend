@@ -56,7 +56,7 @@ const page = () => {
         }
         else {
             setLoading(true);
-            axios.post("http://localhost:8080/api/v1/login", data, { withCredentials: true })
+            axios.post("https://authentication-postgress-backend-95.vercel.app/api/v1/login", data, { withCredentials: true })
                 .then((res) => {
                     console.log(res);
                     toast.success("Login SuccessFull");
@@ -131,10 +131,10 @@ const page = () => {
 
     async function handleGoogle(res) {
         const credential = res.credential;
-        const result = await axios.post(`http://localhost:8080/api/v1/auth/google`, { credential }, { withCredentials: true });
+        const result = await axios.post(`https://authentication-postgress-backend-95.vercel.app/api/v1/auth/google`, { credential }, { withCredentials: true });
         console.log(result);
-        if (result.data.success) {   
-            fireConfetti();   
+        if (result.data.success) {
+            fireConfetti();
             router.replace("/");
         }
         else {
@@ -213,7 +213,7 @@ const page = () => {
                     <div className="border-t-2 w-4/5 lg:w-[70%] mx-auto relative pt-4 flex flex-col gap-4">
                         <p className="bg-white w-fit px-4 absolute translate-x-1/2 -translate-y-1/2 right-1/2 font-semibold top-0">or</p>
                         <GoogleLogin onSuccess={handleGoogle} onError={() => { toast.error("Google Validation failed") }} />
-                        <FBLoginButton fireConfetti={fireConfetti}/>
+                        <FBLoginButton fireConfetti={fireConfetti} />
                     </div>
                     <p className="text-center text-sm">Don't have an account? <Link href="/signup" className="font-semibold hover:underline underline-offset-2">Sign Up</Link></p>
                 </div>

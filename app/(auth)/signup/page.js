@@ -65,7 +65,7 @@ const page = () => {
 
     async function handleGoogle(res) {
         const credential = res.credential;
-        const result = await axios.post(`http://localhost:8080/api/v1/auth/google`, { credential }, { withCredentials: true });
+        const result = await axios.post(`https://authentication-postgress-backend-95.vercel.app/api/v1/auth/google`, { credential }, { withCredentials: true });
         console.log(result);
         if (result.data.success) {
             router.push("/");
