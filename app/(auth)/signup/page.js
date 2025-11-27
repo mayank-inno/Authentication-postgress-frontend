@@ -6,10 +6,12 @@ import axios from "axios";
 import { toast } from "react-toastify"
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import { GoogleLogin } from '@react-oauth/google';
+
 const page = () => {
+
     const router = useRouter();
     const [error, setError] = useState({ emailError: false, passError: false, confirmPassError: false });
-
     const [loading, setLoading] = useState(false);
     const [showPassValidation, setShowPassValidation] = useState(false);
 
@@ -44,7 +46,7 @@ const page = () => {
             axios.post("https://authentication-postgress-backend-95.vercel.app/api/v1/sign-up", { email: data.email, password: data.password })
                 .then((res) => {
                     toast.success("Account Created SuccessFull");
-                    router.push("/login");
+                    router.replace("/login");
                 })
                 .catch((err) => {
                     const errCode = err.response?.status || 800;
@@ -61,16 +63,29 @@ const page = () => {
         }
     }
 
+    async function handleGoogle(res) {
+        const credential = res.credential;
+        const result = await axios.post(`http://localhost:8080/api/v1/auth/google`, { credential }, { withCredentials: true });
+        console.log(result);
+        if (result.data.success) {
+            router.push("/");
+        }
+        else {
+            console.log(res);
+            toast.error("Gmail Verification failed, try again");
+        }
+    }
+
     return (
         <div className="min-h-screen w-full h-full flex items-center justify-center p-2 bg-white/90 z-[1] relative">
             <div className="absolute inset-0 z-[2] bg-[url('/signup-bg.jpg')] bg-cover bg-center"></div>
             <div className="z-[3] max-w-[1200px] container px-1 py-4 sm:p-4 rounded-lg flex  gap-6 bg-white">
                 <div className="w-full sm:w-1/2 rounded-lg flex flex-col gap-4">
-                    <img src="/logo.avif" alt="Logo" className="w-[100px] mx-auto" />
+                    <Image src="/logo.avif" alt="Logo" className=" mx-auto" width={50} height={50} />
                     <div className="grow flex flex-col gap-2 w-4/5 lg:w-[70%] mx-auto">
                         <h1 className="text-center mx-auto text-xl md:text-3xl ">Create Account</h1>
                         <p className="text-center">Register your account today and enjoy seamless access. </p>
-                        <form onSubmit={handleSubmit} className="py-8 sm:py-12 lg:py-16 flex flex-col gap-6">
+                        <form onSubmit={handleSubmit} className=" py-6 flex flex-col gap-6">
                             <div className="flex flex-col gap-1">
                                 <label className={`font-semibold ${error.emailError ? "text-red-600 animate-bounce transition [animation-iteration-count:1]" : ""}`}>Email</label>
                                 <input type="email" placeholder='Enter your email'
@@ -102,6 +117,10 @@ const page = () => {
                                 {loading ? <Spinner borderColor="border-white" /> : <p>Sign Up</p>}
                             </button>
                         </form>
+                        <div className="border-t-2 mx-auto relative pt-4 flex flex-col gap-4 w-full">
+                            <p className="bg-white w-fit px-4 absolute translate-x-1/2 -translate-y-1/2 right-1/2 font-semibold top-0">or</p>
+                            <GoogleLogin onSuccess={handleGoogle} onError={() => { toast.error("Google Verification Failed") }} />
+                        </div>
                     </div>
                     <p className="text-center text-sm">Already a User? <Link href="/login" className="font-semibold hover:underline underline-offset-2">Login</Link></p>
                 </div>

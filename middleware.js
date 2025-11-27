@@ -4,12 +4,13 @@ const middleware = (req) => {
     const token = req.cookies.get("token")?.value;
     const url = req.nextUrl.pathname;
     const authPages = ["/login", "/signup", "/reset-password"];
-
-    // if no tooken and no auth page then redirect to login
+    
+    // If NO token and user is trying to access any protected page → redirect to login
     if (!token && !authPages.includes(url)) {
         return NextResponse.redirect(new URL("/login", req.url));
     }
-    // if tokken and also a public page then let go req
+
+    // If token exists but user tries to visit login/signup/reset → redirect home
     if (token && authPages.includes(url)) {
         return NextResponse.redirect(new URL("/", req.url));
     }
@@ -19,5 +20,5 @@ const middleware = (req) => {
 export default middleware;
 
 export const config = {
-  matcher: ["/((?!_next|api|favicon.ico|.*\\..*).*)"]
+    matcher: ["/((?!_next|api|favicon.ico|.*\\..*).*)"]
 };

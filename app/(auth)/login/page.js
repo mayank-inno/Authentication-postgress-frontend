@@ -6,7 +6,12 @@ import axios from "axios";
 import { toast } from "react-toastify"
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import { GoogleLogin } from "@react-oauth/google";
+import FBLoginButton from '../../../components/FBLoginButton';
+import confetti from "canvas-confetti";
+
 const page = () => {
+
     const router = useRouter();
     const [error, setError] = useState({ emailError: false, passError: false });
 
@@ -32,7 +37,13 @@ const page = () => {
         }
         return false;
     }
-
+    function fireConfetti() {
+        confetti({
+            particleCount: 200,
+            spread: 70,
+            origin: { y: 1.0 }
+        });
+    }
     function handleSubmit(e) {
         e.preventDefault();
         const formData = new FormData(e.target);
@@ -45,10 +56,11 @@ const page = () => {
         }
         else {
             setLoading(true);
-            axios.post("https://authentication-postgress-backend-95.vercel.app/api/v1/login", data, { withCredentials: true })
+            axios.post("http://localhost:8080/api/v1/login", data, { withCredentials: true })
                 .then((res) => {
                     console.log(res);
                     toast.success("Login SuccessFull");
+                    fireConfetti();
                     router.push("/");
                 })
                 .catch((err) => {
@@ -117,20 +129,34 @@ const page = () => {
         checkSpecialCharacter(e.target.value);
     }
 
+    async function handleGoogle(res) {
+        const credential = res.credential;
+        const result = await axios.post(`http://localhost:8080/api/v1/auth/google`, { credential }, { withCredentials: true });
+        console.log(result);
+        if (result.data.success) {   
+            fireConfetti();   
+            router.replace("/");
+        }
+        else {
+            console.log(res);
+            toast.error("Gmail Verification failed, try again");
+        }
+    }
+
     return (
         <div className="relative min-h-screen w-full h-full flex items-center justify-center p-2 bg-white z-[1]">
             {/* for blur */}
             <div className="absolute inset-0 bg-[url('/login-bg.jpg')] bg-cover bg-center blur-sm z-[2]"></div>
             <div className="max-w-[1200px] container px-1 py-4 sm:p-4 rounded-lg flex  gap-6 bg-white z-[3]">
                 <div className="hidden  sm:flex sm:w-1/2 rounded-lg px-2 py-4">
-                    <Image src="/login_side.png" alt="" width={1200} height={1200} className="w-full h-auto aspect-square self-center"/>
+                    <Image src="/login_side.png" alt="" width={1200} height={1200} className="w-full h-auto aspect-square self-center" />
                 </div>
                 <div className="w-full sm:w-1/2 rounded-lg flex flex-col gap-4">
-                    <img src="/logo.avif" alt="Logo" className="w-[100px] mx-auto" />
+                    <Image src="/logo.avif" alt="Logo" width={50} height={50} className="mx-auto" />
                     <div className="grow flex flex-col gap-2 w-4/5 lg:w-[70%] mx-auto">
                         <h1 className="text-center mx-auto text-xl md:text-3xl ">Welcome Back</h1>
                         <p className="text-center">Enter your email or password to access your account</p>
-                        <form onSubmit={handleSubmit} className="py-8 sm:py-12 lg:py-16 flex flex-col gap-6">
+                        <form onSubmit={handleSubmit} className="pt-4 sm:pt-6 flex flex-col gap-4">
                             <div className="flex flex-col gap-1">
                                 <label className={`font-semibold ${error.emailError ? "text-red-600 animate-bounce transition [animation-iteration-count:1]" : ""}`}>Email</label>
                                 <input type="email" placeholder='Enter your email'
@@ -154,7 +180,7 @@ const page = () => {
                                 </div>
                                 <Link href="/reset-password" className="text-sm underline underline-offset-2 self-end mt-1">Forget Password</Link>
                             </div>
-                            <div className="flex flex-col gap-2">
+                            <div className="flex flex-col gap-1">
                                 <div className={` text-xs flex gap-1 items-center ${passValidation.length ? "text-green-600" : "text-red-600"}`}>
                                     <i className={`fa-solid ${passValidation.length ? "fa-check" : "fa-x"} text-[10px]`}></i>
                                     <p className="">Password must have atleast 8 characters.</p>
@@ -182,6 +208,12 @@ const page = () => {
                                 {loading ? <Spinner borderColor="border-white" /> : <p>Sign In</p>}
                             </button>
                         </form>
+                    </div>
+                    {/* for google microsoft login */}
+                    <div className="border-t-2 w-4/5 lg:w-[70%] mx-auto relative pt-4 flex flex-col gap-4">
+                        <p className="bg-white w-fit px-4 absolute translate-x-1/2 -translate-y-1/2 right-1/2 font-semibold top-0">or</p>
+                        <GoogleLogin onSuccess={handleGoogle} onError={() => { toast.error("Google Validation failed") }} />
+                        <FBLoginButton fireConfetti={fireConfetti}/>
                     </div>
                     <p className="text-center text-sm">Don't have an account? <Link href="/signup" className="font-semibold hover:underline underline-offset-2">Sign Up</Link></p>
                 </div>
